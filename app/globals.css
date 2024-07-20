@@ -26,6 +26,14 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+.page-min-height{
+    height: calc(100vh - 132px);
+}
+
+.page-content{
+  padding: 20px 30px;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
