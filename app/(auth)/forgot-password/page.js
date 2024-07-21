@@ -1,11 +1,11 @@
 'use client'
 import { foggotPassResendOtpSubmitDb, foggotPassVerifyOtpDb, foggotPassVerifyOtpSubmitDb, forgotPassEmailSubmitDb, handleForgotPassSubmitDb } from '@/app/(firebase)/firebaseAuth';
-import { regexEmail } from '@/helper/constant_helper';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { handleForgotPassVerifyOtp } from '../store/authReducer';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { numberRegex, regexEmail } from '@/helper/regex';
 
 function ForgotPassword() {
   const [msg, setMsg] = useState('');
@@ -24,7 +24,6 @@ function ForgotPassword() {
   const [ab, setAb] = useState(false);
   const router = useRouter();
 
-  console.log(emailSentStore,'emailSentStore')
   function handleInput(e){
     setInputs({...inputs, [e.target.name]:e.target.value})
   }
@@ -53,6 +52,10 @@ function ForgotPassword() {
 
   const foggotPassVerifyOtpSubmit = async(e)=>{
     e.preventDefault();
+    if (otp.length !== 6) {
+      //console.log('hre')
+      return;
+    }
     //setReqIn(true);
     const res = await foggotPassVerifyOtpDb(inputs.email, otp);
     setReqIn(false);
@@ -156,7 +159,15 @@ function ForgotPassword() {
                 <form onSubmit={(e) => foggotPassVerifyOtpSubmit(e)}>
                   <div className='field pb-4'>
                     <div className='label'><label>Otp*</label></div>
-                    <input className='rounded focus:outline-none w-full h-10 pl-2' name='otp' onChange={(e) => setOtp(e.target.value)} placeholder='Otp'></input>
+                    <input
+                      className='rounded focus:outline-none w-full h-10 pl-2'
+                      name='otp'
+                      onChange={
+                        (e) => numberRegex.test(e.target.value) ?
+                        setOtp(e.target.value) :
+                        ''}
+                      placeholder='Otp'
+                      value={otp}></input>
                     <div onClick={handResend} className='mt-2'>
                       <span className={`${showResend ? 'opacity-100 cursor-pointer' : 'opacity-50'} mt-2 `}>Resend otp </span>{timer}
                     </div>

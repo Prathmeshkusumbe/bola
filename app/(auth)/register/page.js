@@ -1,14 +1,13 @@
 'use client'
 import { checkCred, checkEmailDb, checkUsernameDb } from '@/app/(firebase)/firebaseAuth';
 import { sendEmailVerification } from '@/controllers/user_controler';
-import { regexEmail, regexStrongPassword } from '@/helper/constant_helper';
 import { setCookie, setSiteCookie } from '@/helper/generalHelper';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useRef, useState } from 'react'
 import { handleEmailVerificationOtp } from '../store/authReducer';
 import { useDispatch, useSelector } from 'react-redux';
-import { nameRegex, usernameRegex } from '@/helper/regex';
+import { nameRegex, regexEmail, regexStrongPassword, usernameRegex } from '@/helper/regex';
 
 
 function Register() {
@@ -46,6 +45,7 @@ function Register() {
 
   async function checkUsername(username){
     if (!usernameRegex.test(username)) {
+      console.log('early return')
       setUsernameAvail('not avail')
       return;
     }
@@ -86,7 +86,7 @@ function Register() {
         return;
       }
     }
-
+    setReqIn(true);
     const res = await sendEmailVerification(inputs);
     setReqIn(false);
     setMsg('');
@@ -120,12 +120,16 @@ function Register() {
       setMsg(<div className='text-rose-500'>Email is required.</div>);
       return false;
     }
-    if (!(inputs.email.match(regexEmail))) {
-      setMsg(<div className='text-rose-500'>Please end valid Email.</div>);
+    if (!regexEmail.test(inputs.email)) {
+      setMsg(<div className='text-rose-500'>Please enter valid Email.</div>);
       return false;
     }
     if (!(inputs.username)) {
       setMsg(<div className='text-rose-500'>Username is required</div>);
+      return false;
+    }
+    if (!usernameRegex.test(inputs.username)) {
+      setMsg(<div className='text-rose-500'>Please enter valid Username.</div>);
       return false;
     }
     if (!(inputs.pass)) {
@@ -133,7 +137,7 @@ function Register() {
       return false;
     }
     if (!(inputs.pass.match(regexStrongPassword))) {
-      setMsg(<div className='text-rose-500'>Password is weak.</div>);
+      setMsg(<div className='text-rose-500'>Please enter valid password</div>);
       return false;
     }
     if (!(inputs.cpass)) {
