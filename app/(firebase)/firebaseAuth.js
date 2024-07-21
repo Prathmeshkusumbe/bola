@@ -25,7 +25,6 @@ export async function checkCred(username, pass){
       const diffInmilli = currMili - dbMili;
       const hour = (diffInmilli / 1000) / 60 / 60;
       if(hour < 24){
-        console.log(hour,'hour')
         return {status:false};
       }else{
         const {rateLimit, rateLimitTime, ...rest} = data;
