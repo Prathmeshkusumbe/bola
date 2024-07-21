@@ -32,7 +32,8 @@ function Header() {
     }
     else{
       console.log('token found')
-      setButtonName('chat')
+      setButtonName('chat');
+      setLoginText('Log Out');
     }
 
   },[decodedToken]);
@@ -59,6 +60,8 @@ function Header() {
     {name:'Profile', link:'/profile', },
     {name:loginText, onClick:logoutUser},
   ];
+
+  console.log(loginText,'loginText')
 
   function myAccout(){
     return(
