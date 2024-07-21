@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux';
 import { handleDecodedToken } from '../store/authReducer';
-import { nameRegex, usernameRegex } from '@/helper/regex';
+import { nameRegex, regexEmail, regexStrongPassword, usernameRegex } from '@/helper/regex';
 
 function Login() {
 
@@ -50,12 +50,13 @@ function Login() {
   }
 
   function validateInput(){
-    if(!(lInputs.username) || !usernameRegex.test(lInputs.username)){
+    console.log(usernameRegex.test(lInputs.username), regexEmail.test(lInputs.username))
+    if(!(lInputs.username) || !(usernameRegex.test(lInputs.username) || regexEmail.test(lInputs.username))){
       setMsg(<div className='text-rose-500'>Invalid inputs</div>);
       return false;
     }
-    if (!(lInputs.pass)) {
-      setMsg(<div className='text-rose-500'>Password is required</div>);
+    if (!(lInputs.pass) || !regexStrongPassword.test(lInputs.pass)) {
+      setMsg(<div className='text-rose-500'>Invalid inputs</div>);
       return false;
     }
     return true;

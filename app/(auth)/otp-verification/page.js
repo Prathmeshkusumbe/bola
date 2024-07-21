@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { handleDecodedToken, handleEmailVerificationOtp } from '../store/authReducer';
 import { sendEmailVerification } from '@/controllers/user_controler';
 import { setSiteCookie } from '@/helper/generalHelper';
+import { numberRegex } from '@/helper/regex';
 
 function OtpVerification() {
   const [msg, setMsg] = useState();
@@ -21,11 +22,16 @@ function OtpVerification() {
   const router = useRouter();
   dispatch(handleIsWork());
   async function handleInput(e){
+    if(numberRegex.test(e.target.value))
     setInputs({...inputs, [e.target.name]:e.target.value});
   }
 
   const oformSubmit = async (e) => {
     e.preventDefault();
+    if (inputs.otp.length !== 6) {
+      console.log('hre')
+      return;
+    }
     console.log(inputs.otp, emailVerificationData.inputs.email)
     const res = await validateEmailVeriFicationOtp(inputs.otp, emailVerificationData.inputs.email);
     console.log(res);
@@ -131,7 +137,7 @@ function OtpVerification() {
                 <form onSubmit={(e) => oformSubmit(e)}>
                   <div className='field pb-4'>
                     <div className='label'><label>Otp</label></div>
-                    <input className='rounded focus:outline-none w-full h-10 pl-2' name='otp' onChange={(e) => handleInput(e)} placeholder='otp'></input>
+                    <input className='rounded focus:outline-none w-full h-10 pl-2' name='otp' onChange={(e) => handleInput(e)} placeholder='otp' value={inputs.otp}></input>
                     <div onClick={handResend} className='mt-2'>
                       <span className={`${showResend ? 'opacity-100 cursor-pointer' : 'opacity-50'} mt-2 `}>Resend otp </span>{timer}
                     </div>
