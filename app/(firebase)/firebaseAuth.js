@@ -4,6 +4,8 @@ import { db } from "./firebaseConfig";
 import { collection, addDoc, updateDoc, query, where, getDocs, serverTimestamp, doc, onSnapshot, collectionGroup, deleteDoc, orderBy } from "firebase/firestore";
 import jwt from 'jsonwebtoken';
 import { sendHTMLEmail } from "@/controllers/user_controler";
+import bcrypt from 'bcrypt'
+import { currentDateTime } from "@/helper/generalHelper";
 
 export async function checkCred(username, pass){
   const userCol = collection(db,'users');
@@ -35,7 +37,12 @@ export async function checkCred(username, pass){
       }
     }
   }
-  if(!querySnapshot.empty && pass === querySnapshot.docs[0].data().pass){
+  if(querySnapshot.empty)
+    return {
+      status: false
+    };
+  const hash = querySnapshot.docs[0].data().pass;
+  if(!querySnapshot.empty && bcrypt.compareSync(pass, hash)){
     let data = querySnapshot.docs[0].data();
     const secret = process.env.JWT_SECRET_KEY;
     const {pass, ...rest} = data;
@@ -44,7 +51,7 @@ export async function checkCred(username, pass){
     console.log(token);
     return {status:true, token};
   }
-  if (!querySnapshot.empty && pass !== querySnapshot.docs[0].data().pass) {
+  if (!querySnapshot.empty && !bcrypt.compareSync(pass, hash)) {
     let data = querySnapshot.docs[0].data();
     let time = new Date();
     if(data?.rateLimit){
@@ -54,9 +61,7 @@ export async function checkCred(username, pass){
     await updateDoc(docRef, { ...data, rateLimit, rateLimitTime: time})
     return { status: false};
   }
-  return {
-    status: false
-  };
+
 }
 
 export async function checkUsernameDb(username){
@@ -117,6 +122,7 @@ export async function addOtpToFb(otp, email){
 }
 
 export async function validateEmailVeriFicationOtp(otp,email) {
+  if (process.env.NEXT_PUBLIC_DISABLE_OTP_EMAIL) {return { status: true }}
   try {
     const userCol = collection(db, 'otpVerification');
     const q = query(userCol, where('email', '==', email), orderBy('createdAt', 'desc'));
@@ -139,16 +145,19 @@ export async function validateEmailVeriFicationOtp(otp,email) {
 }
 
 export async function addUserToFb(user) {
-  try{
+  //try{
+    const saltRounds = parseInt(process.env.SALT_ROUNDS);
+    user.pass = bcrypt.hashSync(user.pass, saltRounds);
+    user['regAt'] = currentDateTime().getTime();
     const res = await addDoc(collection(db, 'users'), { ...user });
     if(res){
       return { status: true}
     }else{
       return { status: false, msg: 'something went wrong' }
     }
-  }catch(e){
-    return {status:false, msg: 'something went wrong'}
-  }
+  //}catch(e){
+    //return {status:false, msg: 'something went wrong'}
+  //}
 }
 
 export const getJWTSignedToken =  (data) => {

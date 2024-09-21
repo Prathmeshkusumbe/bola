@@ -4,6 +4,11 @@ import "./globals.css";
 import ReduxProvider from "./ReduxProvider";
 import { useSelector } from "react-redux";
 import Header from "@/components/Header/Header";
+import { ModalProvider } from "./context/ModalContext";
+import { createContext, useState } from 'react';
+import useModal from "./CustomHooks/useModal";
+import Modal from "@/components/common/Modal";
+import { Toaster } from "react-hot-toast";
 
 //const inter = Inter({ subsets: ["latin"] });
 
@@ -13,13 +18,21 @@ const metadata = {
 };
 
 export default function RootLayout({ children }) {
+
+  const [modal, handleModal, modalContent] = useModal();
+  const [test, setTest]  = useState();
+
   return (
     <html className='' lang="en">
       <body className=''>
         <ReduxProvider>
+          <ModalProvider>
           <Header />
           {children}
+          <Toaster position="top-right" reverseOrder={false}/>
+          </ModalProvider>
         </ReduxProvider>
+
       </body>
     </html>
   );

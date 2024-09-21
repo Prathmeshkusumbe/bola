@@ -24,8 +24,11 @@ export default function Home() {
 
 
   return (
-    <div>
-      home page
-    </div>
+    <>
+      <div>
+        home page
+      </div>
+    </>
+
   );
 }

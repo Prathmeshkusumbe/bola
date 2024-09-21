@@ -51,12 +51,14 @@ function Login() {
 
   function validateInput(){
     console.log(usernameRegex.test(lInputs.username), regexEmail.test(lInputs.username))
-    if(!(lInputs.username) || !(usernameRegex.test(lInputs.username) || regexEmail.test(lInputs.username))){
-      setMsg(<div className='text-rose-500'>Invalid inputs</div>);
+    console.log(!(
+    !lInputs.username || !usernameRegex.test(lInputs.username) || !regexEmail.test(lInputs.username)))
+    if(!(!lInputs.username || !usernameRegex.test(lInputs.username) || !regexEmail.test(lInputs.username))){
+      setMsg(<div className='text-rose-500'>Invalid inputs1</div>);
       return false;
     }
     if (!(lInputs.pass) || !regexStrongPassword.test(lInputs.pass)) {
-      setMsg(<div className='text-rose-500'>Invalid inputs</div>);
+      setMsg(<div className='text-rose-500'>Invalid inputs2</div>);
       return false;
     }
     return true;

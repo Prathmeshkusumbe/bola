@@ -23,15 +23,11 @@ function Header() {
 
   const notHeaderRequire = ['login'];
 
-
-  console.log(logoutUseFlag, 'logoutUseFlag');
-
   useEffect(()=>{
     if (!decodedToken) {
       getToken();
     }
     else{
-      console.log('token found')
       setButtonName('chat');
       setLoginText('Log Out');
     }
@@ -61,8 +57,6 @@ function Header() {
     {name:loginText, onClick:logoutUser},
   ];
 
-  console.log(loginText,'loginText')
-
   function myAccout(){
     return(
       <>
@@ -74,11 +68,8 @@ function Header() {
 
 
   if (router.isReady && notHeaderRequire.includes(pathname)){
-
     return null;
   }
-
-  console.log(pathname, 'pathname', notHeaderRequire.includes(pathname))
 
   return (
     <header className='text-lg dark:bg-slate-800 bg-white pl-4 pt-4 pb-4 pr-4 lg:pl-20 lg:pr-20'>
@@ -105,6 +96,5 @@ function Header() {
 export default Header
 
 export async function getServerSideProps({ req, query, resolvedUrl }) {
-  console.log(req, query, resolvedUrl)
   return { props: {} }
 }

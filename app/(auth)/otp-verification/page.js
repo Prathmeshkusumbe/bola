@@ -29,12 +29,9 @@ function OtpVerification() {
   const oformSubmit = async (e) => {
     e.preventDefault();
     if (inputs.otp.length !== 6) {
-      console.log('hre')
       return;
     }
-    console.log(inputs.otp, emailVerificationData.inputs.email)
     const res = await validateEmailVeriFicationOtp(inputs.otp, emailVerificationData.inputs.email);
-    console.log(res);
     if(res.status){
       const userData = JSON.parse(JSON.stringify(emailVerificationData.inputs));
       delete userData['cpass'];

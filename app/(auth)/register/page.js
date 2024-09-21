@@ -87,7 +87,12 @@ function Register() {
       }
     }
     setReqIn(true);
-    const res = await sendEmailVerification(inputs);
+    let res;
+    if(process.env.DISABLE_OTP_EMAIL){
+      res=1;
+    }else{
+      res = await sendEmailVerification(inputs);
+    }
     setReqIn(false);
     setMsg('');
     console.log('res', res)
@@ -154,6 +159,8 @@ function Register() {
     }
     return true;
   }
+
+  console.log('process.env.DISABLE_OTP_EMAIL', process.env.NEXT_PUBLIC_DISABLE_OTP_EMAIL)
 
   return (
     <div className='flex items-center min-h-screen pt-10 pb-10 pl-4 pr-4'>
