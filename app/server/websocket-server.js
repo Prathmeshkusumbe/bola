@@ -13,6 +13,7 @@ wss.on('connection', (ws) => {
 
   // Associate the user with their WebSocket connection
   ws.on('message', (data) => {
+    console.log(data, 'parsedData');
     const parsedData = JSON.parse(data);
     //const { receiver, sender, msgContent, userId } = parsedData;
 
